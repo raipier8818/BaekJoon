@@ -1,20 +1,18 @@
 num = int(input())
-count = 0
 
-n = 1
-while n < num and num > 2 :
-    n *= 3
-    count += 1
+arr = [0 for _ in range(num+1)]
 
-while n < num:
-    n *= 2
-    count += 1
+def minimum(a,b):
+    if a <= b:
+        return a
+    if b < a:
+        return b
 
+for i in range(2,num+1):
+    arr[i] = arr[i-1] + 1
+    if i % 3 == 0:
+        arr[i] = minimum(arr[i], arr[i//3] + 1)
+    if i % 2 == 0:
+        arr[i] = minimum(arr[i], arr[i//2] + 1)
 
-print(count)
-
-
-'''
-3x+2y-z = num
-x+y+z의 최솟값?
-'''
+print(arr[num])
