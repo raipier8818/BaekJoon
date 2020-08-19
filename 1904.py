@@ -1,21 +1,14 @@
 n = int(input())
 
 
-dp_1 = [0]
-dp_0 = [0]
+dp = [0 for _ in range(n+3)]
 
-for i in range(1,n + 1):
-    if i == 1:
-        dp_0.append(0)
-        dp_1.append(1)
-    if i == 2:
-        dp_0.append(1)
-        dp_1.append(1)
+dp[0] = 0
+dp[1] = 1
+dp[2] = 2
 
-    if i >= 3:
-        dp_0.append(dp_0[-2] + dp_1[-2])
-        dp_1.append(dp_0[-2] + dp_1[-1])
-        dp_0.pop(0)
-        dp_1.pop(0)
+for i in range(3,n+1):
+    dp[i] = (dp[i-1] + dp[i-2])%15746
 
-print(dp_0[-1] + dp_1[-1])
+
+print(dp[n])

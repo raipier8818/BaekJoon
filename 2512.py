@@ -1,28 +1,24 @@
 n = int(input())
-arr = list(map(int,input().split()))
+govern = list(map(int,input().split()))
 
-m = int(input())
+budget = int(input())
 
-mid = m // n
-cost = 0
-if sum(arr) <= m:
-    print(max(arr))
-    
-else:
-    while True:
-        for i in range(n):
-            if arr[i] < mid:
-                cost += arr[i]
-            else:
-                cost += mid
+start = 0
+end = max(govern)
 
-        if cost > m:
-            break
+while start <= end:
+    mid = (start + end) // 2
 
-        elif cost < m:
-            mid += 1
-            cost = 0
+    b = 0
+    for i in govern:
+        if i < mid:
+            b += i
+        else:
+            b += mid
 
+    if b <= budget:
+        start = mid + 1
+    else:
+        end = mid - 1
 
-
-    print(mid-1)
+print(end)

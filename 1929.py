@@ -1,18 +1,13 @@
-m ,n=map(int,input().split())
-nlist = []
+def f(num):
+    l = int(num**0.5)
+    for i in range(2,l+1):
+        if num % i == 0:
+            return 0
+    return 1
+
+m, n = map(int,input().split())
+
 for i in range(m,n+1):
-    string = 0
-    if i>1:
-        if i%2 != 0:
-            for k in range(3,i,2):
-                if i%k==0:
-                    string = 1
-                    break
-                else:
-                    string = 0
-
-        if string == 0:
-            nlist.append(i)
-
-for k in range(len(nlist)):
-    print(nlist[k])
+    c = f(i)
+    if c == 1:
+        print(i)
