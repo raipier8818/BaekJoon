@@ -1,32 +1,34 @@
-a = list(map(int,input().split()))
-ver = a[0]
-hor = a[1]
-inventory = a[2]
+import sys
+n,m,b = map(int,input().split())
 
-location = []
+floor = []
+for i in range(n):
+    num = list(map(int,input().split()))
+    floor += num
 
-for i in range(0,ver):
-    ver_list = list(map(int,input().split()))
-    location.append(ver_list)
-
-#######################################################
-
-add = 0
-count = 0
-
-for k in range(0,ver):
-    for j in range(0,hor):
-        add = add + location[k][j]
+top, bot = max(floor), min(floor)
 
 
+result_time = sys.maxsize
+result_floor = 0
 
-average = add/(ver*hor)
+for f in range(bot,top+1):
+    time = 0
+    block = 0
 
-for k in range(0,ver):
-    for j in range(0,hor):
-        if location[k][j] > average:
-            count += 1
+    for j in floor:
+        h = f - j
+        if h > 0:
+            time += 1*h
+            block -= h
+        if h < 0:
+            time += 2*(-1)*h
+            block -= h
 
+    if b + block >= 0:
+        if result_time >= time:
+            if result_floor <= f:
+                result_floor = f
+                result_time = time
 
-
-
+print(result_time,result_floor)

@@ -1,19 +1,12 @@
-num = int(input())
+n = int(input())
 
 a = list(map(int,input().split()))
 b = list(map(int,input().split()))
 
-b_ = []
-
-for i in range(num):
-    b_.append(b[i])
-
 a.sort()
-b_.sort(reverse= True)
+b.sort(reverse=True)
 
-add = 0
-
-for k in range(num):
-    add += a[k]*b_[k]
-
-print(add)
+s = 0
+for i in range(n):
+    s += a[i]*b[i]
+print(s)
