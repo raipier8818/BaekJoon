@@ -1,39 +1,27 @@
-import sys
-sys.setrecursionlimit(10**8)
 n = int(input())
 
+row = [0 for _ in range(n)]
 
-visit = [[0 for _ in range(n)] for __ in range(n)]
+
 count = 0
-def checkPosition(row,column):
-    for i in range(row-1,-1,-1):
-        if visit[i][column] == 1:
-            return False
 
-    for i in range(1,n):
-        if column + i < n and visit[row-i][column+i] == 1:
+def check(y):
+    for i in range(y):
+        if row[i] == row[y] or abs(row[i] - row[y]) == y - i:
             return False
-        if column - i >= 0 and visit[row-i][column-i] == 1:
-            return False
-
     return True
 
 
-def find(row):
+def find(y):
     global count
-    if row == n:
+    if y == n:
         count += 1
         return
 
-    for i in range(n):
-        check = checkPosition(row,i)
-        if check == True:
-            visit[row][i] = 1
-            find(row+1)
-            visit[row][i] = 0
-
-
-
+    for x in range(n):
+        row[y] = x
+        if check(y):
+            find(y+1)
 
 find(0)
 print(count)
