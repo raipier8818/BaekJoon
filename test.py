@@ -1,6 +1,4 @@
-n = int(input())
+id = int(input())
 
-for i in range(1,n+1):
-    if i%2 == 0:
-        continue
-    print(i)
+id = (int(id / 1000) + int(id / 100) + int(id / 10)) % 1000
+print(id)

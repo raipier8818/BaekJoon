@@ -1,69 +1,81 @@
 #include <bits/stdc++.h>
+using namespace std;
 
 int n,m;
-int arr[1000][1000];
-int visit[1000][1000];
-int minNum = __INT_MAX__;
+int board[1000][1000];
+int v[1000][1000];
 
-int dx[] = {-1,0,1,0};
-int dy[] = {0,1,0,-1};
-bool check = 0;
+int ans = -1;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
 
-/*
-void find(int x, int y, int wall, int count){
-    //printf("// %d %d %d // \n", x, y, wall);
-    
-    if(x == m-1 && y == n-1){
-        //printf("c : %d\n",count);
-        minNum = std::min(minNum,count);
-        check = 1;
-        return;
-    }
+queue<pair<pair<int,int>,pair<bool,int>>> pos;
 
-    for(int i = 0; i < 4; i++){
-        int X = x + dx[i];
-        int Y = y + dy[i];
+void find(){
+    while(!pos.empty())
+    {    
+        pair<int,int> current = pos.front().first;
+        bool wall = pos.front().second.first;
+        int count = pos.front().second.second;
 
-        if(0 <= X && X < m && 0 <= Y && Y < n){
-            if(arr[Y][X] == 0 && visit[Y][X] == 0){
-                visit[Y][X] = 1;
-                find(X,Y,wall,count+1);
-                visit[Y][X] = 0; 
-            }
+        pos.pop();
 
-            else if(arr[Y][X] == 1 && wall > 0 && visit[Y][X] == 0){
-                visit[Y][X] = 1;
-                find(X,Y,wall-1,count+1);
-                visit[Y][X] = 0;
-            }
+        int row = current.first;
+        int col = current.second;
+
+        
+        if(row < 0 || row >= n || col < 0 || col >= m){
+            continue;
         }
 
+        if(board[row][col] == 1){
+            if(wall == false){
+                continue;
+            }
+
+            wall = false;
+        }
+
+        if(v[row][col] == 1) continue;
+
+        if(row == n-1 && col == m-1){
+            //cout << " : " << count << endl;
+            ans = max(ans,count);
+            continue;
+        }
+
+        cout << "// " << row << " " << col << " " << wall << " // " << pos.size() + 1 << " " << count << endl;
+
+        v[row][col] = 1;
+        
+        for(int i = 0; i < 4; i++){
+            int nr = row + dx[i];
+            int nc = col + dy[i];
+
+            pos.push(make_pair(make_pair(nr,nc),make_pair(wall,count+1)));
+        }
     }
-    
 
-
+    cout << ans << endl;
 }
-*/
+
 
 
 int main(){
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
 
-    std::cin >> n >> m;
+    cin >> n >> m;
 
+    
     for(int i = 0; i < n; i++){
-        std::string a;
-        std::cin >> a;
+        string row; cin >> row;
+
         for(int j = 0; j < m; j++){
-            arr[i][j] = a[j] - '0';
+            board[i][j] = row[j] - 48;
         }
     }
 
-    arr[0][0] = 1;
-    visit[0][0] = 1;
-
-    find(0,0,1,1);
-    if (check == 0) std::cout << -1 << "\n";
-    else std::cout << minNum << "\n";
+    pos.push(make_pair(make_pair(0,0),make_pair(true,1)));
+    find();
 }
