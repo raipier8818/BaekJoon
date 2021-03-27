@@ -23,5 +23,4 @@ int main(){
         cout << arr[num+10000000] << "\n";
     }
 
-
 }
