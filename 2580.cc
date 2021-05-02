@@ -2,40 +2,63 @@
 using namespace std;
 
 int board[9][9];
-vector<pair<int,int>> pos;
+int zero[9][9];
 
-void find(){
-    for(int i = 0; i < pos.size(); i++){
-        int r = pos[i].first;
-        int c = pos[i].second;
+vector<pair<int,int>> zeroPoint;
 
-        int visit[9] = {0,};
-        //check row
-        for(int row = 0; row < 9; row++){
-            if(pos[i].first == row) continue;
-            visit[board[row][c]] = 1;
+
+void find(pair<int,int> point, int idx){
+    if(idx == zeroPoint.size()){
+        for (int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                cout << board[i][j] << " ";
+            }
+            cout << "\n";
         }
-        //check col
-        for(int col = 0; col < 9; col++){
-            if(pos[i].second == col) continue;
-            visit[board[r][col]] = 1;
+        return;
+    }
+
+    cout << " // " << point.first << " " << point.second << "\n";
+
+    int check[10] = {0,0,0,0,0,0,0,0,0,0};
+    
+    for(int i = 0; i < 9; i++){
+        check[board[i][point.second]] = 1;
+    }
+    for(int i = 0; i < 9; i++){
+        check[board[point.first][i]] = 1;
+    }
+    for(int i = point.first; i < point.first + 3; i++){
+        for(int j = point.second; j < point.second + 3; j++){
+            check[board[i][j]] = 1;
         }
+    }
 
-        //check box
+    stack<int>val;
+    for(int i = 1; i <= 9; i++){
+        if(check[i] == 0) val.push(i);
+    }
 
+    while (!val.empty())
+    {
+        int v = val.top();
+        val.pop();
 
-
+        board[point.first][point.second] = v;
+        find(zeroPoint[idx+1], idx+1);
+        board[point.first][point.second] = 0;
     }
 }
 
-int main(){
-    ios::sync_with_stdio(0);
-    cin.tie(0);
 
-    for(int i = 0; i < 9; i++){
+
+
+int main(){
+    for (int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
             cin >> board[i][j];
-            if(board[i][j] == 0) pos.push_back(make_pair(i,j));
+            if(board[i][j] == 0) zeroPoint.push_back(make_pair(i,j));
         }
     }
+    find(zeroPoint[0],0);
 }

@@ -1,7 +1,3 @@
 {
-    "files.associations": {
-        "ostream": "cpp",
-        "iostream": "cpp"
-    },
-    "compile-hero.disable-compile-files-on-did-save-code": false
+    "python.pythonPath": "C:\\Users\\Lake\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
 }
