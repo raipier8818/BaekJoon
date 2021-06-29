@@ -2,8 +2,59 @@
 using namespace std;
 
 int t,n;
+bool check = false;
 vector<string> book;
+typedef struct _node{
+    char val;
+    bool final = false;
+    struct _node* child[10];
+}node;
 
+node* init(){
+    node* newNode = new node();
+    for(int i = 0; i < 10; i++){
+        newNode->child[i] = NULL;
+    }
+    return newNode;
+}
+
+void insert(node* root, string val){
+    int idx = 0;
+    node* temp = root;
+    //cout << val << endl;
+
+
+    while(idx != val.size()){
+        char i = val[idx];
+        if(temp->final == true){
+            check = true;
+            break;
+        }
+
+
+        if(temp->child[i-48] == NULL){
+            //cout << "insert " << val[idx] << endl;
+            
+            node* newNode = init();
+            newNode->val = i;
+            temp->child[i-48] = newNode;
+            temp = temp->child[i-48];
+            idx++;
+        }else{
+            //cout << "pass " << val[idx] << endl;
+
+            temp = temp->child[i-48];
+            idx++;
+        }
+    }  
+
+    if(temp->final == true){
+        check = true;
+        return;
+    }
+
+    temp->final = true;
+}
 
 int main(){
     ios::sync_with_stdio(0);
@@ -11,32 +62,25 @@ int main(){
 
     cin >> t;
     while(t--){
-        book.clear();
-
         cin >> n;
-        while(n--){
-            string p;
-            cin >> p;
-            book.push_back(p);  
-        }
-        
-        sort(book.begin(),book.end());
-
-        bool check = true;
-        for(int i = 0; i < book.size() - 1; i++){
-            for(int j = i+1; j < book.size(); j++){
-                if(book[j].find(book[i],0) != string::npos){
-                    //cout << book[i] << endl;
-                    //cout << book[j] << endl;
-
-                    check = false;
-                    break;
-                }
-            }
-            if(!check) break;
+        node* root = init();
+        book.clear();
+        check = false;
+        for(int i = 0; i < n; i++){
+            string s;
+            cin >> s;
+            book.push_back(s);
         }
 
-        if(check) cout << "YES\n";
-        else cout << "NO\n";
+        sort(book.begin(), book.end());
+
+        for(string temp : book){
+            insert(root, temp);
+            //cout << check << endl;
+            if(check) break;
+        }
+
+        if(check) cout << "NO\n";
+        else cout << "YES\n"; 
     }
 }

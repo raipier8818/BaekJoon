@@ -2,34 +2,31 @@
 using namespace std;
 
 int n, m;
-int arr[300];
-int dp[301];
+long long arr[300];
+long long dp[301];
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);
+    int left = 0;
+    int right = 0;
 
     cin >> n >> m;
     for(int i = 0; i < n; i++){
         cin >> arr[i];
-        if(i == 0){
-            dp[i+1] = arr[i];
-            continue;
-        }
+        left = left < arr[i] ? arr[i] : left;
+        right += arr[i];
 
-        dp[i+1] = dp[i] + arr[i];
-    }   
-
-    int start = 0;
-    int end = n - 1;
-
-    while(start <= end){
-        int mid = (start + end) / 2;
-
-        for(int i = 0; i < mid; i++){
-            
-        }
+        dp[i+1] = arr[i] + dp[i];
     }
 
+    int mid = 0;
+    int group_num = 0;
+    int ans = 0;
+    vector<int> 
 
+    while(left < right){
+        mid = (left + right) / 2;
+        
+    }
 }
