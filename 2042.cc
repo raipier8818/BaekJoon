@@ -1,66 +1,53 @@
-#include <iostream>
-#include <vector>
-#include <stdio.h>
-#define ll long long
-int n,m,k;
-
+#include <bits/stdc++.h>
 using namespace std;
 
+long long n,m,k;
+long long a,b,c;
 
-class segtree{
-    public:
-    vector <ll> tree;
-    int size;
+long long segtree[4000001];
 
-    segtree(int n){
-        for (size = 1; size < n; size *= 2);
-        tree.resize(2*size);
+int idx;
+
+void insert(long long val, long long i){
+    segtree[i] = val;
+    while(i != 1){
+        segtree[i/2] = segtree[(i/2)*2] + segtree[(i/2)*2+1];
+        i/=2;
     }
+}
 
-    void update(int pos, ll x){
-        int index = size + pos - 1;
-        int u = x - tree[index];
-
-        while (index){
-            tree[index] += u;
-            index /= 2;
-        }
+long long find(long long start, long long end, long long S, long long E, long long index){
+    if(start > E || end < S) return 0;
+    else if(start >= S && end <= E){
+        return segtree[index];
     }
-
-    ll getsum(int pos, int left, int right, int start, int end){
-        if (right < start || left > end){
-            return 0;
-        }
-
-        if (start >= left && end <= right){
-            return tree[pos];
-        }
-
-        int mid = (start + end) / 2;
-        return getsum(pos * 2, left, right, start, mid) + getsum(pos * 2 + 1, left, right, mid+1, end);
+    else{
+        return find(start, (start + end) / 2, S, E, index * 2) + find((start + end) / 2 + 1, end, S, E, index*2 + 1);
     }
-
-};
+    
+}
 
 int main(){
-    scanf("%d %d %d", &n,&m,&k);
-    segtree Arr(n);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
 
-    for(int i = 1; i <= n; i++){
+    cin >> n >> m >> k;
+    for(idx = 1; idx < n; ) idx *= 2;
+    
+    for(int i = 0; i < n; i++){
         int num;
-        scanf("%d",&num);
-        Arr.update(i, num);
+        cin >> num;
+        insert(num, i + idx);
     }
 
-    int count = m + k;
-    while (count--)
-    {
-        int d,left,right;
-        scanf("%d %d %d",&d,&left,&right);
-        if(d == 1){
-            Arr.update(left,right);
+    m += k;
+    while(m--){
+        cin >> a >> b >> c;
+        if(a == 1){
+            insert(c, idx + b - 1);
         }
-        else printf("%lld\n",Arr.getsum(1,left,right,1,Arr.size));
+        else{
+            cout << find(1, idx, b,c,1) << "\n";
+        }
     }
-
 }
