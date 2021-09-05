@@ -1,2 +1,3 @@
+memset(visited, 0, sizeof(visited));
 
-void f(int val){
+                

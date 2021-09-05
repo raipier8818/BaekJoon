@@ -6,6 +6,7 @@ int n, m;
 int arr[10][10];
 int visited[10][10];
 vector<pair<int, int>> v;
+vector<pair<int, int>> blank;
 
 int answer = 0;
 
@@ -29,7 +30,6 @@ queue<pair<int, int>> q;
 void find_ans(int w1_x, int w1_y, int w2_x, int w2_y, int w3_x, int w3_y) {
     if (arr[w1_x][w1_y] != 0 || arr[w2_x][w2_y] != 0 || arr[w3_x][w3_y] != 0) return;
     
-
 
     memset(visited, 0, sizeof(visited));
     for (int i = 0; i < n; i++) {
@@ -66,7 +66,6 @@ void find_ans(int w1_x, int w1_y, int w2_x, int w2_y, int w3_x, int w3_y) {
     answer = max(answer, check());
 }
 
-vector<pair<int, int>> blank;
 
 int main() {
     cin >> n >> m;
@@ -88,5 +87,4 @@ int main() {
 
 
     cout << answer;
-
 }

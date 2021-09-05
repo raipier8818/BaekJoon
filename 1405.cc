@@ -13,7 +13,7 @@ int board[29][29];
 double p = 0;
 
 void calculate(int E,int W,int S,int N){
-    //cout << E << W << S << N << p << "\n";
+    cout << E << W << S << N << p << "\n";
 
     p += (pow(e,E)*pow(w,W)*pow(s,S)*pow(n,N));
 }
@@ -25,7 +25,7 @@ void find(int E, int W, int S, int N, int C){
         return;
     }
 
-    //cout << board[14+N-S][14+E-S] << "\n";
+    cout << board[14+N-S][14+E-S] << "\n";
 
     if(board[14+N-S+1][14+E-W] == 0){
         board[14+N-S+1][14+E-W] = 1;

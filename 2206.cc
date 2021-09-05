@@ -1,62 +1,51 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n,m;
-int board[1000][1000];
-int v[1000][1000];
+int n, m;
+int arr[1001][1001];
+int visited[1001][1001];
+vector<pair<int,int>> v;
 
-int ans = -1;
-int dx[] = {1,-1,0,0};
-int dy[] = {0,0,1,-1};
+int dx[4] = {1,-1,0,0};
+int dy[4] = {0,0,1,-1};
 
-queue<pair<pair<int,int>,pair<bool,int>>> pos;
+int answer;
 
-void find(){
-    while(!pos.empty())
-    {    
-        pair<int,int> current = pos.front().first;
-        bool wall = pos.front().second.first;
-        int count = pos.front().second.second;
+bool checkPoint(int nx, int ny){
+    return !(nx < 0 || nx >= n || ny < 0 || ny >= m || visited[nx][ny] == 1);
+}
 
-        pos.pop();
 
-        int row = current.first;
-        int col = current.second;
+void dfs(pair<int,int> w1, pair<int,int> w2, pair<int,int> w3, pair<int,int> cur, int count){
+    // cout << "// " << cur.first << " " << cur.second << endl;
+    if(cur.first == n - 1 && cur.second == m - 1){
+        answer = max(answer, count);
+        return;
+    }
 
-        
-        if(row < 0 || row >= n || col < 0 || col >= m){
-            continue;
-        }
+    cout << "// " << cur.first << " " << cur.second << endl;
 
-        if(board[row][col] == 1){
-            if(wall == false){
-                continue;
-            }
-
-            wall = false;
-        }
-
-        if(v[row][col] == 1) continue;
-
-        if(row == n-1 && col == m-1){
-            //cout << " : " << count << endl;
-            ans = max(ans,count);
-            continue;
-        }
-
-        cout << "// " << row << " " << col << " " << wall << " // " << pos.size() + 1 << " " << count << endl;
-
-        v[row][col] = 1;
-        
-        for(int i = 0; i < 4; i++){
-            int nr = row + dx[i];
-            int nc = col + dy[i];
-
-            pos.push(make_pair(make_pair(nr,nc),make_pair(wall,count+1)));
+    int temp[1001][1001];
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            temp[i][j] = arr[i][j];
         }
     }
 
-    cout << ans << endl;
+    temp[w1.first][w1.second] = 0;
+    temp[w2.first][w2.second] = 0;
+    temp[w3.first][w3.second] = 0;
+
+    for(int i = 0; i < 4; i++){
+        int nx = cur.first + dx[i];
+        int ny = cur.second + dy[i];
+
+        if(checkPoint(nx, ny) && temp[nx][ny] == 0){
+            visited[nx][ny] = 1;
+            dfs(w1, w2, w3, make_pair(nx, ny), count + 1);
+            visited[nx][ny] = 0;
+        }
+    }
 }
 
 
@@ -66,16 +55,35 @@ int main(){
     cin.tie(0);
 
     cin >> n >> m;
-
-    
     for(int i = 0; i < n; i++){
-        string row; cin >> row;
+        string row;
+        cin >> row;
+        
+        // cout << row << endl; 
 
         for(int j = 0; j < m; j++){
-            board[i][j] = row[j] - 48;
+            if(row[j] == '0'){
+                arr[i][j] = 0;
+            }else{
+                arr[i][j] = 1;
+                v.push_back(make_pair(i,j));
+            }
+        }
+    
+    }
+
+    for(int i = 0; i < v.size() - 2; i++){
+        for(int j = i + 1; j < v.size() - 1; j++){
+            for(int k = j + 1; k < v.size(); k++){
+                // cout << "//" << i << " " << j << " " << k << endl;
+                memset(visited, 0, sizeof(visited));
+
+                dfs(v[i], v[j], v[k], make_pair(0,0), 0);
+            }
         }
     }
 
-    pos.push(make_pair(make_pair(0,0),make_pair(true,1)));
-    find();
+    cout << answer;
+
+
 }

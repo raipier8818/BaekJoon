@@ -1,138 +1,265 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int arr[21][21];
+int visited[21][21];
+
 int n;
-int arr[20][20][6];
+int answer;
 
-int ans;
+typedef struct _point {
+    int row;
+    int col;
+}point;
 
-void ResetLayer(int layer){
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            arr[i][j][layer] = 0;
+int find_max() {
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            ans = max(ans, visited[i][j]);
+        }
+    }
+    return ans;
+}
+
+void rotate_clockwise() {  //clockwise
+    int temp[21][21];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            temp[i][j] = visited[n - 1 - j][i];
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = temp[i][j];
         }
     }
 }
 
 
-int FindMax(){
-    int result = 0;
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            result = max(result, arr[i][j][6]);
+void rotate_counterclockwise() {  //clockwise
+    int temp[21][21];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            temp[i][j] = visited[j][n - 1 - i];
         }
     }
-    return result;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = temp[i][j];
+        }
+    }
 }
 
+bool merge_node(point p1, point p2) {
+    if (visited[p1.row][p1.col] == 0 || visited[p1.row][p1.col] != visited[p2.row][p2.col]) return false;
 
-void find(string dir, int layer){
-    if(layer > 5){
-        ans = max(ans,FindMax());
+    visited[p1.row][p1.col] *= 2;
+    visited[p2.row][p2.col] = 0;
+
+    return true;
+}
+
+void func_2048(int count) {
+    if (count >= 5) {
+        answer = max(answer, find_max());
         return;
     }
+    int temp[21][21];
 
-    ResetLayer(layer);
+    //cout << "-----------" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            temp[i][j] = visited[i][j];
+            //cout << temp[i][j] << " ";
+        }
+        //cout << endl;
+    }
 
-    bool c = false;
-
-    if(dir == "left"){
-        for(int row = 0; row < n; row++){
-            for(int col = 0; col < n; col++){
-                bool c = false;
-                for(int target = 1; target < n; target++){
-                    if(arr[row][col][layer-1] == arr[row][target][layer-1]){
-                        arr[row][col][layer] = arr[row][col][layer-1] * 2;
-                        arr[row][target][layer] = 0;
-                        c = true;
-                        break;
-                    }
+    //left
+    int row = 0;
+    while (row < n) {
+        int first = 0;
+        while (first < n) {
+            int second = first + 1;
+            while (second < n) {
+                if (merge_node({ row, first }, { row, second })) {
+                    first = second;
                 }
+                second++;
+            }
+            first++;
+        }
+        row++;
+    }
 
-                if(c == false) col--;
+    for (int row = 0; row < n; row++) {
+        int blank = 0;
+        for (int i = 0; i < n; i++) {
+            if (visited[row][i] != 0) {
+                visited[row][blank] = visited[row][i];
+                if (blank != i) {
+                    visited[row][i] = 0;
+                }
+                blank++;
             }
         }
     }
 
-    if(dir == "right"){
-        for(int row = 0; row < n; row++){
-            for(int col = n-1; col >= 0; col--){
-                bool c = false;
-                for(int target = n-2; target >= 0; target--){
-                    if(arr[row][col][layer-1] == arr[row][target][layer-1]){
-                        arr[row][col][layer] = arr[row][col][layer-1] * 2;
-                        arr[row][target][layer] = 0;
-                        break;
-                    }
-                }
+    func_2048(count + 1);
 
-                if(c == false) col--;
-            }
-        }
-    }
-    
-    c = false;
 
-    if(dir == "up"){
-        for(int col = 0; col < n; col++){
-            for(int row = 0; row < n; row++){
-                bool c = false;
-                for(int target = 1; target < n; target++){
-                    if(arr[row][col][layer-1] == arr[target][col][layer-1]){
-                        arr[row][col][layer] = arr[row][col][layer-1] * 2;
-                        arr[target][row][layer] = 0;
-                        break;
-                    }
-                }
-
-                if(c == false) row--;
-            }
+    //right
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = temp[i][j];
         }
     }
 
-    c = false;
+    rotate_clockwise();
+    rotate_clockwise();
 
-    if(dir == "down"){
-        for(int col = 0; col < n; col++){
-            for(int row = 0; row < n; row++){
-                bool c = false;
-                for(int target = n-1; target >= 0; target--){
-                    if(arr[row][col][layer-1] == arr[target][col][layer-1]){
-                        arr[row][col][layer] = arr[row][col][layer-1] * 2;
-                        arr[target][row][layer] = 0;
-                        break;
-                    }
+
+    row = 0;
+    while (row < n) {
+        int first = 0;
+        while (first < n) {
+            int second = first + 1;
+            while (second < n) {
+                if (merge_node({ row, first }, { row, second })) {
+                    first = second;
                 }
+                second++;
+            }
+            first++;
+        }
+        row++;
+    }
 
-                if(c == false) row--;
+    for (int row = 0; row < n; row++) {
+        int blank = 0;
+        for (int i = 0; i < n; i++) {
+            if (visited[row][i] != 0) {
+                visited[row][blank] = visited[row][i];
+                if (blank != i) {
+                    visited[row][i] = 0;
+                }
+                blank++;
             }
         }
     }
 
-    find("left", layer+1);
-    find("right", layer+1);
-    find("up", layer+1);
-    find("down", layer+1);
+    rotate_clockwise();
+    rotate_clockwise();
 
+    func_2048(count + 1);
+
+    //up
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = temp[i][j];
+        }
+    }
+
+    rotate_counterclockwise();
+
+
+    row = 0;
+    while (row < n) {
+        int first = 0;
+        while (first < n) {
+            int second = first + 1;
+            while (second < n) {
+                if (merge_node({ row, first }, { row, second })) {
+                    first = second;
+                }
+                second++;
+            }
+            first++;
+        }
+        row++;
+    }
+
+    for (int row = 0; row < n; row++) {
+        int blank = 0;
+        for (int i = 0; i < n; i++) {
+            if (visited[row][i] != 0) {
+                visited[row][blank] = visited[row][i];
+                if (blank != i) {
+                    visited[row][i] = 0;
+                }
+                blank++;
+            }
+        }
+    }
+    rotate_clockwise();
+
+    func_2048(count + 1);
+
+    //down
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = temp[i][j];
+        }
+    }
+
+    rotate_clockwise();
+
+
+    row = 0;
+    while (row < n) {
+        int first = 0;
+        while (first < n) {
+            int second = first + 1;
+            while (second < n) {
+                if (merge_node({ row, first }, { row, second })) {
+                    first = second;
+                }
+                second++;
+            }
+            first++;
+        }
+        row++;
+    }
+
+    for (int row = 0; row < n; row++) {
+        int blank = 0;
+        for (int i = 0; i < n; i++) {
+            if (visited[row][i] != 0) {
+                visited[row][blank] = visited[row][i];
+                if (blank != i) {
+                    visited[row][i] = 0;
+                }
+                blank++;
+            }
+        }
+    }
+
+    rotate_counterclockwise();
+
+    func_2048(count + 1);
 }
 
-int main(){
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-
-    cin >> n;
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            cin >> arr[i][j][0];
+void init() {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            visited[i][j] = arr[i][j];
         }
     }
-    
-    int layer = 0;
+}
 
-    find("left", layer+1);
-    find("right", layer+1);
-    find("up", layer+1);
-    find("down", layer+1);
 
-    cout << ans << endl;
+int main() {
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> arr[i][j];
+            visited[i][j] = arr[i][j];
+        }
+    }
+
+    func_2048(0);
+    cout << answer;
 }
