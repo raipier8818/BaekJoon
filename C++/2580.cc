@@ -1,64 +1,60 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <utility>
+#include <string.h>
+#include <algorithm>
 using namespace std;
 
-int board[9][9];
-int zero[9][9];
+int sudoku[9][9];
+vector<pair<int, int> > v;
 
-vector<pair<int,int>> zeroPoint;
+bool check(int row, int col){
+    int temp[10];
+    memset(temp, 0, sizeof(temp));
 
+    for(int i = 0; i < 9; i++){
+        temp[sudoku[row][i]]++;
+        temp[sudoku[i][col]]++;
+        temp[sudoku[row/3*3+i/3][col/3*3+i%3]]++;
+    }
 
-void find(pair<int,int> point, int idx){
-    if(idx == zeroPoint.size()){
-        for (int i = 0; i < 9; i++){
+    for(int i = 1; i <= 9; i++){
+        if(temp[i] > 3) return false;
+    }
+
+    return true;
+}
+
+void findsudoku(int idx){
+    if(idx == v.size()){
+        for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
-                cout << board[i][j] << " ";
+                cout << sudoku[i][j] << " ";
             }
-            cout << "\n";
+            cout << endl;
         }
+        cout << endl;
+        exit(0);
         return;
     }
 
-    cout << " // " << point.first << " " << point.second << "\n";
-
-    int check[10] = {0,0,0,0,0,0,0,0,0,0};
-    
-    for(int i = 0; i < 9; i++){
-        check[board[i][point.second]] = 1;
-    }
-    for(int i = 0; i < 9; i++){
-        check[board[point.first][i]] = 1;
-    }
-    for(int i = point.first; i < point.first + 3; i++){
-        for(int j = point.second; j < point.second + 3; j++){
-            check[board[i][j]] = 1;
+    for(int i = 1; i <= 9; i++){
+        sudoku[v[idx].first][v[idx].second] = i;
+        if(check(v[idx].first, v[idx].second)){
+            findsudoku(idx+1);
         }
     }
-
-    stack<int>val;
-    for(int i = 1; i <= 9; i++){
-        if(check[i] == 0) val.push(i);
-    }
-
-    while (!val.empty())
-    {
-        int v = val.top();
-        val.pop();
-
-        board[point.first][point.second] = v;
-        find(zeroPoint[idx+1], idx+1);
-        board[point.first][point.second] = 0;
-    }
+    sudoku[v[idx].first][v[idx].second] = 0;
 }
 
-
-
-
 int main(){
-    for (int i = 0; i < 9; i++){
+
+    for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
-            cin >> board[i][j];
-            if(board[i][j] == 0) zeroPoint.push_back(make_pair(i,j));
+            cin >> sudoku[i][j];
+            if(sudoku[i][j] == 0) v.push_back(make_pair(i, j));
         }
     }
-    find(zeroPoint[0],0);
+
+    findsudoku(0);
 }
