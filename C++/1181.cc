@@ -1,68 +1,31 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <set>
 using namespace std;
 
-struct Trie{
-    char val;
-    Trie* next[26];
-    bool last = false;
+int n;
+
+struct compare {
+    bool operator()(const string& a, const string& b) const{
+        if(a.size() == b.size()) return a < b;
+        return a.size() < b.size();
+    }
 };
 
-Trie* initTrie(){
-    Trie *trie = new Trie();
-    trie->val = 0;
-    for(int i = 0; i < 26; i++){
-        trie->next[i] = NULL;
-    }
-    trie->last = false;    
-    return trie;
-}
-
-void insertTrie(Trie* t, string val, int idx){
-    
-    if(t->next[val[idx] - 'a'] == NULL){
-        Trie *temp = initTrie();
-        t->next[val[idx] - 'a'] = temp;
-        temp->val = val[idx];
-        if(val.size() == idx + 1){
-            temp->last = true;
-            return;
-        }else{
-            temp->last = false;
-            insertTrie(temp, val, idx + 1);
-        }
-    }else{
-        Trie* temp = t->next[val[idx] - 'a'];
-        if(val.size() == idx + 1){
-            temp->last = true;
-        }else{
-            insertTrie(temp, val, idx + 1);
-        }
-    }
-}
-
-void printTrie(Trie* t, string val){
-    if(t->last){
-        cout << val + t->val << endl;
-    }
-
-    for(int i = 0; i < 26; i++){
-        if(t->next[i] != NULL){
-            printTrie(t->next[i], val + t->val);
-        }
-    }
-}
-
 int main(){
-    int n;
     cin >> n;
-    
-    Trie *trie = initTrie();
+    set<string, compare> words;
 
     for(int i = 0; i < n; i++){
         string word;
         cin >> word;
-        insertTrie(trie, word, 0);
+        
+        words.insert(word);
     }
 
-    printTrie(trie, "");
+    for(string temp : words){
+        cout << temp << endl;
+    }
 }
