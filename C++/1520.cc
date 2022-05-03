@@ -1,49 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int ans;
+int mp[500][500];
+int dp[500][500];
+
 int n,m;
-int board[500][500];
 
-int c = 0;
+int solve(int x, int y){
+    if(x == 0 && y == 0) return 1;
+    if(dp[x][y] != -1) return dp[x][y];
 
-int dx[] = {1,-1,0,0};
-int dy[] = {0,0,1,-1};
-
-void count(){
-    queue<pair<int,int>> q;
-    q.push(make_pair(0,0));
-
-    while(!q.empty()){
-        pair<int,int> cur = q.front();
-        q.pop();
-
-        if(cur.first < 0 || cur.first >= n || cur.second < 0 || cur.second >= m) continue;
-        if(cur.first == n - 1 && cur.second == m - 1){
-            c += 1;
-            continue;
-        }
-
-        for(int i = 0; i < 4; i++){
-            int nx = cur.first + dx[i];
-            int ny = cur.second + dy[i];
-
-            if(board[nx][ny] < board[cur.first][cur.second]){
-                q.push(make_pair(nx,ny));
-            }
+    int dx[] = {1,-1,0,0};
+    int dy[] = {0,0,1,-1};
+    dp[x][y] = 0;
+    
+    for(int i = 0; i < 4; i++){
+        int nx = dx[i] + x;
+        int ny = dy[i] + y;
+        if(nx >= 0 && nx < n && ny >= 0 && ny < m && mp[x][y] < mp[nx][ny]){
+            dp[x][y] += solve(nx, ny);
         }
     }
+    return dp[x][y];
 }
 
-
 int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
     cin >> n >> m;
+
     for(int i = 0; i < n; i++){
         for(int j = 0; j < m; j++){
-            cin >> board[i][j];
+            cin >> mp[i][j];
         }
     }
 
-    count();
-    cout << c << endl;
+    memset(dp, -1, sizeof(dp));
 
+    cout << solve(n-1, m-1) << endl;
 }
