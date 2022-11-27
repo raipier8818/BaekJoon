@@ -22,7 +22,7 @@ int main(){
 
     // dp[i][j] : i까지 봤을 때, j의 비용으로 만들 수 있는 메모리 최댓값.
     for(int i = 1; i <= n; i++){
-        for(int j = 0; j < sum; j++){
+        for(int j = 0; j <= sum; j++){
             if(j >= costs[i]){
                 dp[i][j] = max(dp[i][j], dp[i-1][j-costs[i]] + bites[i]);
             }
