@@ -1,265 +1,178 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
 using namespace std;
 
-int arr[21][21];
-int visited[21][21];
+vector< vector<int> > move_left(int n, vector< vector<int> >& board){
+    vector< vector<int> > temp_board(n, vector<int>(n,0));
 
-int n;
-int answer;
-
-typedef struct _point {
-    int row;
-    int col;
-}point;
-
-int find_max() {
-    int ans = 0;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            ans = max(ans, visited[i][j]);
+    for(int i = 0; i < n; i++){
+        int temp_idx = 0;
+        for(int j = 0; j < n; j++){
+            if(board[i][j] == 0){
+                continue;
+            }else if(temp_board[i][temp_idx] == 0){
+                temp_board[i][temp_idx] = board[i][j];
+            }else{
+                if(temp_board[i][temp_idx] == board[i][j]){
+                    temp_board[i][temp_idx] *= 2;
+                    temp_idx++;
+                }else{
+                    temp_idx++;
+                    temp_board[i][temp_idx] = board[i][j];
+                }
+            }
         }
     }
-    return ans;
+
+    return temp_board;
 }
 
-void rotate_clockwise() {  //clockwise
-    int temp[21][21];
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            temp[i][j] = visited[n - 1 - j][i];
+vector< vector<int> > move_right(int n, vector< vector<int> >& board){
+    vector< vector<int> > temp_board(n, vector<int>(n,0));
+
+
+    for(int i = 0; i < n; i++){
+        int temp_idx = n-1;
+        for(int j = n-1; j >= 0; j--){
+            if(board[i][j] == 0){
+                continue;
+            }else if(temp_board[i][temp_idx] == 0){
+                temp_board[i][temp_idx] = board[i][j];
+            }else{
+                if(temp_board[i][temp_idx] == board[i][j]){
+                    temp_board[i][temp_idx] *= 2;
+                    temp_idx--;
+                }else{
+                    temp_idx--;
+                    temp_board[i][temp_idx] = board[i][j];
+                }
+            }
         }
     }
 
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = temp[i][j];
+    return temp_board;
+}
+
+vector< vector<int> > move_up(int n, vector< vector<int> >& board){
+    vector< vector<int> > temp_board(n, vector<int>(n,0));
+
+
+    for(int j = 0; j < n; j++){
+        int temp_idx = 0;
+        for(int i = 0; i < n; i++){
+            if(board[i][j] == 0){
+                continue;
+            }else if(temp_board[temp_idx][j] == 0){
+                temp_board[temp_idx][j] = board[i][j];
+            }else{
+                if(temp_board[temp_idx][j] == board[i][j]){
+                    temp_board[temp_idx][j] *= 2;
+                    temp_idx++;
+                }else{
+                    temp_idx++;
+                    temp_board[temp_idx][j] = board[i][j];
+                }
+            }
         }
+    }
+
+    return temp_board;
+}
+
+vector< vector<int> > move_down(int n, vector< vector<int> >& board){
+    vector< vector<int> > temp_board(n, vector<int>(n,0));
+
+
+    for(int j = 0; j < n; j++){
+        int temp_idx = n-1;
+        for(int i = n-1; i >= 0; i--){
+            if(board[i][j] == 0){
+                continue;
+            }else if(temp_board[temp_idx][j] == 0){
+                temp_board[temp_idx][j] = board[i][j];
+            }else{
+                if(temp_board[temp_idx][j] == board[i][j]){
+                    temp_board[temp_idx][j] *= 2;
+                    temp_idx--;
+                }else{
+                    temp_idx--;
+                    temp_board[temp_idx][j] = board[i][j];
+                }
+            }
+        }
+    }
+
+    return temp_board;
+}
+
+void print_board(int n, vector< vector<int> >& board){
+    cout << "----" << n << "----" << endl;
+    for(int i = 0; i < n ; i++){
+        for(int j = 0; j < n; j++){
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
     }
 }
 
-
-void rotate_counterclockwise() {  //clockwise
-    int temp[21][21];
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            temp[i][j] = visited[j][n - 1 - i];
+bool check_same(int n, vector< vector<int> >& A, vector< vector<int> >& B){
+    for(int i = 0; i < n ; i++){
+        for(int j = 0; j < n; j++){
+            if(A[i][j] != B[i][j]) return false;
         }
     }
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = temp[i][j];
-        }
-    }
-}
-
-bool merge_node(point p1, point p2) {
-    if (visited[p1.row][p1.col] == 0 || visited[p1.row][p1.col] != visited[p2.row][p2.col]) return false;
-
-    visited[p1.row][p1.col] *= 2;
-    visited[p2.row][p2.col] = 0;
-
     return true;
 }
 
-void func_2048(int count) {
-    if (count >= 5) {
-        answer = max(answer, find_max());
-        return;
-    }
-    int temp[21][21];
-
-    //cout << "-----------" << endl;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            temp[i][j] = visited[i][j];
-            //cout << temp[i][j] << " ";
-        }
-        //cout << endl;
-    }
-
-    //left
-    int row = 0;
-    while (row < n) {
-        int first = 0;
-        while (first < n) {
-            int second = first + 1;
-            while (second < n) {
-                if (merge_node({ row, first }, { row, second })) {
-                    first = second;
-                }
-                second++;
-            }
-            first++;
-        }
-        row++;
-    }
-
-    for (int row = 0; row < n; row++) {
-        int blank = 0;
-        for (int i = 0; i < n; i++) {
-            if (visited[row][i] != 0) {
-                visited[row][blank] = visited[row][i];
-                if (blank != i) {
-                    visited[row][i] = 0;
-                }
-                blank++;
-            }
+int get_high_num(int n, vector< vector<int> >& board){
+    int max_num = 0;
+    for(int i = 0; i < n ; i++){
+        for(int j = 0; j < n; j++){
+            max_num = max(max_num, board[i][j]);
         }
     }
-
-    func_2048(count + 1);
-
-
-    //right
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = temp[i][j];
-        }
-    }
-
-    rotate_clockwise();
-    rotate_clockwise();
-
-
-    row = 0;
-    while (row < n) {
-        int first = 0;
-        while (first < n) {
-            int second = first + 1;
-            while (second < n) {
-                if (merge_node({ row, first }, { row, second })) {
-                    first = second;
-                }
-                second++;
-            }
-            first++;
-        }
-        row++;
-    }
-
-    for (int row = 0; row < n; row++) {
-        int blank = 0;
-        for (int i = 0; i < n; i++) {
-            if (visited[row][i] != 0) {
-                visited[row][blank] = visited[row][i];
-                if (blank != i) {
-                    visited[row][i] = 0;
-                }
-                blank++;
-            }
-        }
-    }
-
-    rotate_clockwise();
-    rotate_clockwise();
-
-    func_2048(count + 1);
-
-    //up
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = temp[i][j];
-        }
-    }
-
-    rotate_counterclockwise();
-
-
-    row = 0;
-    while (row < n) {
-        int first = 0;
-        while (first < n) {
-            int second = first + 1;
-            while (second < n) {
-                if (merge_node({ row, first }, { row, second })) {
-                    first = second;
-                }
-                second++;
-            }
-            first++;
-        }
-        row++;
-    }
-
-    for (int row = 0; row < n; row++) {
-        int blank = 0;
-        for (int i = 0; i < n; i++) {
-            if (visited[row][i] != 0) {
-                visited[row][blank] = visited[row][i];
-                if (blank != i) {
-                    visited[row][i] = 0;
-                }
-                blank++;
-            }
-        }
-    }
-    rotate_clockwise();
-
-    func_2048(count + 1);
-
-    //down
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = temp[i][j];
-        }
-    }
-
-    rotate_clockwise();
-
-
-    row = 0;
-    while (row < n) {
-        int first = 0;
-        while (first < n) {
-            int second = first + 1;
-            while (second < n) {
-                if (merge_node({ row, first }, { row, second })) {
-                    first = second;
-                }
-                second++;
-            }
-            first++;
-        }
-        row++;
-    }
-
-    for (int row = 0; row < n; row++) {
-        int blank = 0;
-        for (int i = 0; i < n; i++) {
-            if (visited[row][i] != 0) {
-                visited[row][blank] = visited[row][i];
-                if (blank != i) {
-                    visited[row][i] = 0;
-                }
-                blank++;
-            }
-        }
-    }
-
-    rotate_counterclockwise();
-
-    func_2048(count + 1);
+    return max_num;
 }
 
-void init() {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            visited[i][j] = arr[i][j];
-        }
+int solution(int n, vector< vector<int> > board, int count){
+    if(n == 1){
+        return get_high_num(n, board);
     }
+
+    if(count == 5){
+        return get_high_num(n, board);
+    }
+    int answer = 0;
+
+    vector< vector<int> > temp;
+    temp = move_left(n, board);
+    if(!check_same(n, board, temp)) answer = max(answer, solution(n, temp, count+1));
+
+    temp = move_right(n, board);
+    if(!check_same(n, board, temp)) answer = max(answer, solution(n, temp, count+1));
+
+    temp = move_up(n, board);
+    if(!check_same(n, board, temp)) answer = max(answer, solution(n, temp, count+1));
+
+    temp = move_down(n, board);
+    if(!check_same(n, board, temp)) answer = max(answer, solution(n, temp, count+1));
+
+    return answer;
 }
 
 
-int main() {
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    
+    int n;
     cin >> n;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            cin >> arr[i][j];
-            visited[i][j] = arr[i][j];
+    vector< vector<int> > board(n, vector<int>(n,0));
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            cin >> board[i][j];
         }
     }
-
-    func_2048(0);
-    cout << answer;
+    cout << solution(n, board, 0) << endl;
 }
